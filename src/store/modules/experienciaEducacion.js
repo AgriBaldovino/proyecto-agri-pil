@@ -15,23 +15,23 @@ const mutations = {
 };
 
 const actions = {
-  async fetchEducaciones({ commit }) {
+  async fetchEducaciones() {
     try {
       const response = await axios.get(
         'https://pil-2023-land-default-rtdb.firebaseio.com/personajes/Harry/estudios.json'
       );
-      commit('SET_EDUCACIONES', response.data);
+      return response?.data;
     } catch (error) {
       console.error('Error al obtener los datos de educación:', error);
     }
   },
 
-  async fetchExperiencias({ commit }) {
+  async fetchExperiencias() {
     try {
       const response = await axios.get(
         'https://pil-2023-land-default-rtdb.firebaseio.com/personajes/Harry/experiencia.json'
       );
-      commit('SET_EXPERIENCIAS', response.data);
+      return response?.data;
     } catch (error) {
       console.error('Error al obtener los datos de experiencia:', error);
     }

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card class="mx-auto my-auto" :loading="isLoadingExperienciaComputed">
+    <v-card class="mx-auto my-auto" :loading="isLoadingExperiencia">
       <v-toolbar color="#a7d9da" dark>
         <v-toolbar-title>Experiencia</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -9,7 +9,7 @@
       <div class="scrollable-card">
         <v-list class="scrollable-list" style="overflow-y: auto">
           <v-list-item
-            v-for="experiencia in experienciasComputed"
+            v-for="experiencia in experiencias"
             :key="experiencia.id"
           >
             <v-list-item-content>
@@ -29,7 +29,7 @@
       </div>
     </v-card>
 
-    <v-card class="mx-auto mt-3" :loading="isLoadingEducacionComputed">
+    <v-card class="mx-auto mt-3" :loading="isLoadingEducacion">
       <v-toolbar color="#a7d9da" dark>
         <v-toolbar-title>Educacion</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -38,7 +38,7 @@
       <div class="scrollable-content">
         <v-list class="scrollable-list" style="overflow-y: auto">
           <v-list-item
-            v-for="educacion in educacionesComputed"
+            v-for="educacion in educaciones"
             :key="educacion.id"
           >
             <v-list-item-content>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { /*mapGetters,*/ mapActions } from 'vuex';
 
 export default {
   name: "ExperienciaEducacion",
@@ -70,39 +70,39 @@ export default {
     return {
     isLoadingExperiencia: false,
     isLoadingEducacion: false,
+    educaciones: [],
+    experiencias: [],
   };
-  },
-  computed: {
-    ...mapGetters('experienciaEducacion', ['educaciones', 'experiencias']),
-    isLoadingEducacionComputed() {
-      return this.$store.getters['experienciaEducacion/isLoadingEducacion'];
-    },
-    isLoadingExperienciaComputed() {
-      return this.$store.getters['experienciaEducacion/isLoadingExperiencia'];
-    },
-    experienciasComputed() {
-      return this.experiencias;
-    },
-    educacionesComputed() {
-      return this.educaciones;
-    },
   },
   methods: {
     ...mapActions('experienciaEducacion', ['fetchEducaciones', 'fetchExperiencias']),
     setIsInHomePage() {
       this.$store.commit('setIsInHomePage', false);
     },
+    async obtenerEducaciones(){
+      try {
+        this.isLoadingEducacion = true;
+        this.educaciones = await this.fetchEducaciones();
+      } catch (error) {
+        console.error(error);
+      }
+      this.isLoadingEducacion = false;
+    },
+    async obtenerExperiencias(){
+      try {
+        this.isLoadingExperiencia = true;
+        this.experiencias = await this.fetchExperiencias();
+      } catch (error) {
+        console.error(error);
+      }
+      this.isLoadingExperiencia = false;
+    }
   },
   created() {
-    this.fetchEducaciones();
-    this.fetchExperiencias();
+    this.obtenerEducaciones();
+    this.obtenerExperiencias();
     this.setIsInHomePage();
   },
-  mounted() {
-    this.fetchEducaciones();
-    this.fetchExperiencias();
-  },
-  
 };
 </script>
 
