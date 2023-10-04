@@ -1,23 +1,18 @@
 <template>
   <v-container class="cards-container">
-    <v-card>
-      <v-row>
+      <v-row class="px-5">
         <v-col v-for="card in cards" :key="card.title" cols="12" sm="6" md="4">
-          <v-card @click="MostrarTarjetas">
-            <v-img :src="card.imageUrl" height="300px"> </v-img>
-
-            <v-card-title style="background-color: #f5f5f5 !important">
-              <router-link
-                :to="{ path: card.router }"
-                style="margin-bottom: 1px"
-                >{{ card.title }}</router-link
-              >
-            </v-card-title>
-          </v-card>
+          <router-link :to="{ path: card.router }" style="margin-bottom: 1px">
+            <v-card @click="MostrarTarjetas">
+              <v-img :src="card.imageUrl" height="300px"> </v-img>
+              <v-card-title style="background-color: #f5f5f5 !important">
+                {{card.title}}
+              </v-card-title>
+            </v-card>
+          </router-link>
         </v-col>
       </v-row>
       <router-view v-if="!mostrarTarjetas"></router-view>
-    </v-card>
   </v-container>
 </template>
 
@@ -55,6 +50,10 @@ export default {
   },
   methods: {
     MostrarTarjetas() {
+      console.log(
+        "🚀 ~ file: CardsHome.vue:59 ~ MostrarTarjetas ~ this.mostrarTarjetas:",
+        this.mostrarTarjetas
+      );
       this.mostrarTarjetas = !this.mostrarTarjetas;
     },
     setIsInHomePage(boolean) {
@@ -66,11 +65,11 @@ export default {
 
 <style scoped>
 .cards-container {
-  display: flex;
+  /*display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center;*/
   height: 100%; /* ocupar la altura total del contenedor  */
-  padding: 50px; /* Espacio en blanco arriba y debajo de las tarjetas */
+  /*padding: 50px; /* Espacio en blanco arriba y debajo de las tarjetas */
 }
 </style>
