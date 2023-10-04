@@ -12,12 +12,13 @@ const mutations = {
 };
   
 const actions = {
-    async fetchPresentacion({ commit }) {
+    async fetchPresentacion(/*{ commit }*/) {
       try {
         const response = await axios.get(
             'https://pil-2023-land-default-rtdb.firebaseio.com/personajes/Harry/presentacion.json'
         );
-        commit('SET_PRESENTACION', response.data);
+        //commit('SET_PRESENTACION', response.data);
+        return response?.data;
       } catch (error) {
         console.error('Error al obtener los datos de educación:', error);
       }

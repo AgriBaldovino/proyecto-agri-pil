@@ -56,19 +56,20 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { /*mapGetters*/ mapActions } from 'vuex';
 export default {
   name: 'MiPresentacion',
 
   data: () => ({
+    presentacionHarry: "",
     show: false,
   }),
 
   computed: {
-    ...mapGetters('presentacion', ['presentacionHarry']),
-    presentacionComputed() {
-      return this.presentacionHarry;
-    },
+    // ...mapGetters('presentacion', ['presentacionHarry']),
+    // presentacionComputed() {
+    //   return this.presentacionHarry;
+    // },
     
   },
 
@@ -77,14 +78,18 @@ export default {
     setIsInHomePage(){
       this.$store.commit('setIsInHomePage', false)
     },
+    async cargarPresentacion(){
+      try {
+        this.presentacionHarry = await this.fetchPresentacion();
+      } catch (error) {
+        console.error("🚀 ~ file: MiPresentacion.vue:85 ~ cargarPresentacion ~ error:", error)
+      }
+    }
   },
 
   created() {
-    this.fetchPresentacion();
+    this.cargarPresentacion();
     this.setIsInHomePage(); 
-  },
-  mounted() {
-    this.fetchPresentacion();
   },
 }
 </script>
