@@ -220,7 +220,7 @@ export default {
       getCelular: "contactoHarry/getCelular",
       postContacto: "contactoHarry/postContacto",
     }),
-    async Enviar() {
+    async enviarFormulario() {
       this.isLoading = true;
       const formData = {
         nombreApellido: this.nombreApellido,
