@@ -151,8 +151,9 @@
 </template>
 
 <script>
-import axios from "axios";
 import { VTooltip, VIcon, VBtn } from "vuetify/lib";
+import { mapActions } from "vuex";
+
 export default {
   name: "ContactoHarry",
   components: {
@@ -200,6 +201,7 @@ export default {
   computed: {
     whatsappLink() {
       const encodedMessage = encodeURIComponent(this.generarMensajeWp());
+      this.getNumeroCelular();
       return `https://api.whatsapp.com/send?phone=${this.celularAgri}&text=${encodedMessage}`;
     },
     checkHorario() {
@@ -218,6 +220,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      getCelular: "contactoHarry/getCelular",
+      postContacto: "contactoHarry/postContacto",
+    }),
     async Enviar() {
       this.isLoading = true;
 
@@ -231,9 +237,8 @@ export default {
       };
 
       try {
-        const response = await this.postFormData(formData);
-
-        if (response) {
+        const response = await this.postContacto(formData);
+        if (response.status === 200) {
           const message = this.generarMensajeWp();
 
           const whatsappLink = `https://api.whatsapp.com/send?phone=${
@@ -254,30 +259,8 @@ export default {
       this.limpiarCampos();
     },
 
-    async postFormData(formData) {
-      try {
-        const response = await axios.post(
-          "https://pil-2023-land-default-rtdb.firebaseio.com/contacto/Harry.json",
-          formData
-        );
-
-        if (response.status === 200) {
-          return response.data;
-        } else {
-          throw new Error("Error en la petición");
-        }
-      } catch (error) {
-        console.error("Error al enviar los datos:", error);
-        throw error;
-      }
-    },
-
-    async getCelular() {
-      this.celularAgri = (
-        await axios.get(
-          "https://pil-2023-land-default-rtdb.firebaseio.com/personajes/Harry/celContacto.json"
-        )
-      ).data;
+    async getNumeroCelular() {
+      this.celularAgri = await this.getCelular();
     },
     generarMensajeWp() {
       const mensaje =
@@ -330,15 +313,14 @@ export default {
 
       this.checkFormularioCompleto();
     },
-    setIsInHomePage(){
-      this.$store.commit('setIsInHomePage', false)
+    setIsInHomePage() {
+      this.$store.commit("setIsInHomePage", false);
     },
   },
 
   //saco de los metodos y le saco el async
   created() {
-    this.getCelular();
-    this.setIsInHomePage(); 
+    this.setIsInHomePage();
   },
 };
 </script>
