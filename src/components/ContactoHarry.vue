@@ -1,5 +1,4 @@
 <template>
-  <!-- <div class="my-custom-form"> -->
   <v-container style="justify-content: center">
     <v-card elevation="5" max-width="70%" class="mx-auto pa-8">
       <h2>Formulario de contacto</h2>
@@ -7,7 +6,7 @@
         ref="form"
         v-model="valid"
         class="arial-form"
-        @submit.prevent="Enviar"
+        @submit.prevent="enviarFormulario"
       >
         <v-row>
           <v-col cols="6">
@@ -132,13 +131,13 @@
 
               <v-btn
                 :disabled="!valid || isLoading || !checkHorario"
-                type="Submit"
+                type="submit"
                 color="success"
               >
                 <template v-if="isLoading">
                   <span>Cargando...</span>
                 </template>
-                <template v-else> Enviar </template>
+                <template v-else>Enviar</template>
                 <v-icon>mdi-whatsapp</v-icon>
               </v-btn>
             </div>
@@ -147,12 +146,13 @@
       </v-form>
     </v-card>
   </v-container>
-  <!-- </div> -->
 </template>
 
 <script>
 import axios from "axios";
+import { mapActions } from "vuex";
 import { VTooltip, VIcon, VBtn } from "vuetify/lib";
+
 export default {
   name: "ContactoHarry",
   components: {
@@ -172,13 +172,12 @@ export default {
     mail: "",
     mailRules: [
       (v) => !!v || "Campo requerido",
-      (v) => /.+@.+\..+/.test(v) || "Mail invalido",
+      (v) => /.+@.+\..+/.test(v) || "Mail inválido",
     ],
     tipoSolicitud: null,
     solicitud: ["Cumpleaños", "Evento", "Particular"],
     observaciones: "",
     checkbox: false,
-    celularAgri: null,
     formularioCompleto: false,
     dialogDate: null,
     modal: false,
@@ -200,7 +199,7 @@ export default {
   computed: {
     whatsappLink() {
       const encodedMessage = encodeURIComponent(this.generarMensajeWp());
-      return `https://api.whatsapp.com/send?phone=${this.celularAgri}&text=${encodedMessage}`;
+      return `https://api.whatsapp.com/send?phone=${this.numeroAgri}&text=${encodedMessage}`;
     },
     checkHorario() {
       return this.mañana || this.tarde || this.indefinido;
@@ -216,9 +215,9 @@ export default {
       }
     },
   },
-
   methods: {
-    async Enviar() {
+    ...mapActions("contacto", ["enviarFormulario", "obtenerCelular"]),
+    async enviarFormulario() {
       this.isLoading = true;
 
       const formData = {
@@ -231,24 +230,19 @@ export default {
       };
 
       try {
-        const response = await this.postFormData(formData);
+        await this.$store.dispatch("contacto/enviarFormulario", formData);
 
-        if (response) {
-          const message = this.generarMensajeWp();
+        const message = this.generarMensajeWp();
 
-          const whatsappLink = `https://api.whatsapp.com/send?phone=${
-            this.celularAgri
-          }&text=${encodeURIComponent(message)}`;
-          window.open(whatsappLink, "_blank");
+        const whatsappLink = `https://api.whatsapp.com/send?phone=${
+          this.celularAgri
+        }&text=${encodeURIComponent(message)}`;
+        window.open(whatsappLink, "_blank");
 
-          this.$refs.form.resetValidation();
-          this.isLoading = false;
-        } else {
-          console.error("Error en la petición");
-          this.isLoading = false;
-        }
+        // this.$refs.form.resetValidation();
+        this.isLoading = false;
       } catch (error) {
-        console.error("Error en la petición:", error);
+        console.error("Error al enviar el formulario:", error);
         this.isLoading = false;
       }
       this.limpiarCampos();
@@ -272,13 +266,6 @@ export default {
       }
     },
 
-    async getCelular() {
-      this.celularAgri = (
-        await axios.get(
-          "https://pil-2023-land-default-rtdb.firebaseio.com/personajes/Harry/celContacto.json"
-        )
-      ).data;
-    },
     generarMensajeWp() {
       const mensaje =
         `Nombre y Apellido: ${this.nombreApellido}\n` +
@@ -330,18 +317,18 @@ export default {
 
       this.checkFormularioCompleto();
     },
-    setIsInHomePage(){
-      this.$store.commit('setIsInHomePage', false)
+    setIsInHomePage() {
+      this.$store.commit('setIsInHomePage', false);
     },
   },
 
-  //saco de los metodos y le saco el async
   created() {
-    this.getCelular();
-    this.setIsInHomePage(); 
+    this.obtenerCelular();
+    this.setIsInHomePage();
   },
 };
 </script>
+
 
 <style scoped>
 .my-custom-form {

@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import experienciaEducacion from './modules/experienciaEducacion';
 import presentacion from './modules/presentacion';
+import contacto from './modules/contacto';
 
 
 Vue.use(Vuex);
@@ -22,7 +23,8 @@ const store = new Vuex.Store({
   },
   modules: {
     experienciaEducacion,
-    presentacion 
+    presentacion,
+    contacto
   },
 });
 

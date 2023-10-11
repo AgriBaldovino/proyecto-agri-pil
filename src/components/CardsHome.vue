@@ -50,10 +50,6 @@ export default {
   },
   methods: {
     MostrarTarjetas() {
-      console.log(
-        "🚀 ~ file: CardsHome.vue:59 ~ MostrarTarjetas ~ this.mostrarTarjetas:",
-        this.mostrarTarjetas
-      );
       this.mostrarTarjetas = !this.mostrarTarjetas;
     },
     setIsInHomePage(boolean) {
